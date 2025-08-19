@@ -7,12 +7,16 @@ type LargaNowVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'destruct
 interface LargaNowButtonProps extends Omit<ButtonProps, 'fontFamily' | 'variant'> {
   fontFamily?: 'alata' | 'almarai' | 'default';
   variant?: LargaNowVariant;
+  icon?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
 }
 
 export function LargaNowButton({ 
   children, 
   fontFamily = 'almarai', 
   variant = 'primary',
+  icon,
+  iconPosition = 'left',
   className,
   ...props 
 }: LargaNowButtonProps) {
@@ -32,10 +36,16 @@ export function LargaNowButton({
     <Button
       variant={variantMap[variant]}
       fontFamily={fontFamily}
-      className={cn(className)}
+      className={cn("min-w-[200px] rounded-none", className)}
       {...props}
     >
+      {icon && iconPosition === 'left' && (
+        <span className="mr-2">{icon}</span>
+      )}
       {children}
+      {icon && iconPosition === 'right' && (
+        <span className="ml-2">{icon}</span>
+      )}
     </Button>
   );
 } 

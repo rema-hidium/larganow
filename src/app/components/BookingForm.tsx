@@ -4,6 +4,11 @@ import { LargaNowButton } from "./ui/LargaNowButton";
 import { LocationDropdown, ShippingLineDropdown } from "./ui/LargaNowDropdown";
 import { DatePicker } from "./ui/DatePicker";
 import { TripTypeRadio } from "./ui/TripTypeRadio";
+import { LargaNowInput } from "./ui/LargaNowInput";
+import { LargaNowCheckbox } from "./ui/LargaNowCheckbox";
+import { LargaNowImage } from "./ui/LargaNowImage";
+
+import { CarFront, CarIcon, UserIcon } from 'lucide-react';
 
 export default function BookingForm() {
   const [activeTab, setActiveTab] = useState('passenger');
@@ -12,6 +17,8 @@ export default function BookingForm() {
   const [toLocation, setToLocation] = useState('dapa');
   const [departureDate, setDepartureDate] = useState<Date>();
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date | undefined }>();
+  
+  // Passenger form state
   const [adults, setAdults] = useState(4);
   const [children, setChildren] = useState(1);
   const [infants, setInfants] = useState(0);
@@ -19,51 +26,52 @@ export default function BookingForm() {
   const [shippingLine, setShippingLine] = useState('evaristo-son');
   const [preferredShipping, setPreferredShipping] = useState(true);
 
-  // Deterministic QR code pattern (same on server and client)
-  const qrCodePattern = [
-    1, 1, 1, 1, 1, 1, 1, 0,
-    1, 0, 0, 0, 0, 0, 1, 0,
-    1, 0, 1, 1, 1, 0, 1, 0,
-    1, 0, 1, 1, 1, 0, 1, 0,
-    1, 0, 1, 1, 1, 0, 1, 0,
-    1, 0, 0, 0, 0, 0, 1, 0,
-    1, 1, 1, 1, 1, 1, 1, 0,
-    0, 0, 0, 0, 0, 0, 0, 0
-  ];
+  // Vehicle form state
+  const [vehicleType, setVehicleType] = useState('car');
+  const [vehicleLength, setVehicleLength] = useState('');
+  const [vehicleWidth, setVehicleWidth] = useState('');
+  const [vehicleHeight, setVehicleHeight] = useState('');
+  const [vehicleWeight, setVehicleWeight] = useState('');
+  const [vehicleBrand, setVehicleBrand] = useState('');
+  const [vehicleModel, setVehicleModel] = useState('');
+  const [vehicleYear, setVehicleYear] = useState('');
 
   const isRoundTrip = tripType === 'round-trip';
 
   return (
-    <section className="bg-gray-50 mt-[-150px] font-almarai">
+    <section className="bg-gray-50 mt-[-100px] font-almarai">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Booking Form Card */}
-        <div className="bg-white shadow-lg -mt-20 relative z-20">
+        <div className="bg-white shadow-lg -mt-20 relative z-20 rounded-b-2xl">
           {/* Tabs */}
           <div className="flex">
             <LargaNowButton
-              variant={activeTab === 'passenger' ? 'primary' : 'ghost'}
+              variant="ghost"
               size="lg"
               fontFamily="alata"
               onClick={() => setActiveTab('passenger')}
-              className={`rounded-none ${activeTab === 'passenger' ? 'bg-gray-100' : ''}`}
+              className={`!py-6 ${activeTab === 'passenger' ? 'bg-gray-100' : ''}`}
+              icon={<UserIcon className="w-4 h-4" />}
             >
               PASSENGER
             </LargaNowButton>
             <LargaNowButton
-              variant={activeTab === 'vehicle' ? 'primary' : 'ghost'}
+              variant="ghost"
               size="lg"
               fontFamily="alata"
               onClick={() => setActiveTab('vehicle')}
-              className={`rounded-none ${activeTab === 'vehicle' ? 'bg-gray-100' : ''}`}
+              className={`!py-6 ${activeTab === 'vehicle' ? 'bg-gray-100' : ''}`}
+              icon={<CarFront className="w-4 h-4" />}
             >
               VEHICLE
             </LargaNowButton>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="md:col-span-3 space-y-6 bg-gray-100 p-4">
-            {/* Trip Type, From, To, Departure Date - Horizontal Layout */}
-            <div className="flex flex-col md:flex-row md:items-end md:space-x-4 space-y-4 md:space-y-0">
+            {/* Common Trip Details Section */}
+            <div className="md:col-span-3 space-y-6 bg-gray-100 p-10 py-5">
+              {/* Trip Type, From, To, Departure Date - Horizontal Layout */}
+              <div className="flex flex-col md:flex-row md:items-end md:space-x-4 space-y-4 md:space-y-0">
                 {/* Trip Type */}
                 <div className="flex-1 min-w-[140px] flex items-end">
                   <TripTypeRadio
@@ -129,154 +137,168 @@ export default function BookingForm() {
                   />
                 </div>
               </div>
-              </div>
-            <div className="md:col-span-2 space-y-6">
-              {/* Passengers */}
-              <div className="grid md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Adults</label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      value={adults}
-                      onChange={(e) => setAdults(parseInt(e.target.value) || 0)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    />
-                    <div className="absolute right-3 top-3 space-y-1">
-                      <button
-                        className="text-xs block"
-                        onClick={() => setAdults(prev => Math.max(0, prev + 1))}
-                      >
-                        ▲
-                      </button>
-                      <button
-                        className="text-xs block"
-                        onClick={() => setAdults(prev => Math.max(0, prev - 1))}
-                      >
-                        ▼
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Children</label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      value={children}
-                      onChange={(e) => setChildren(parseInt(e.target.value) || 0)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    />
-                    <div className="absolute right-3 top-3 space-y-1">
-                      <button
-                        className="text-xs block"
-                        onClick={() => setChildren(prev => Math.max(0, prev + 1))}
-                      >
-                        ▲
-                      </button>
-                      <button
-                        className="text-xs block"
-                        onClick={() => setChildren(prev => Math.max(0, prev - 1))}
-                      >
-                        ▼
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Infant</label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      value={infants}
-                      onChange={(e) => setInfants(parseInt(e.target.value) || 0)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    />
-                    <div className="absolute right-3 top-3 space-y-1">
-                      <button
-                        className="text-xs block"
-                        onClick={() => setInfants(prev => Math.max(0, prev + 1))}
-                      >
-                        ▲
-                      </button>
-                      <button
-                        className="text-xs block"
-                        onClick={() => setInfants(prev => Math.max(0, prev - 1))}
-                      >
-                        ▼
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Promo Code */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Promo Code / Voucher Code</label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                  <div className="absolute right-3 top-3 text-green-500">✓</div>
-                </div>
-              </div>
-
-              {/* Shipping Line */}
-              <ShippingLineDropdown
-                value={shippingLine}
-                onValueChange={setShippingLine}
-                placeholder="Select shipping line"
-                label="Shipping Line"
-                size="default"
-                className="bg-white"
-              />
-
-              {/* Preferred Shipping Checkbox */}
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="preferredShipping"
-                  checked={preferredShipping}
-                  onChange={(e) => setPreferredShipping(e.target.checked)}
-                  className="mr-2"
-                />
-                <label htmlFor="preferredShipping" className="text-sm text-gray-700">
-                  Do you have a preferred shipping line?
-                </label>
-              </div>
-
-              {/* Book Now Button */}
-              <LargaNowButton
-                variant="primary"
-                size="xl"
-                className="w-full rounded-[50px]"
-              >
-                BOOK NOW
-              </LargaNowButton>
             </div>
 
-            {/* QR Code Section */}
-            <div className="flex flex-col items-center justify-center space-y-4">
-              <div className="bg-white border-2 border-gray-300 p-4 rounded-lg">
-                <div className="w-32 h-32 bg-gray-900 grid grid-cols-8 grid-rows-8 gap-0.5 p-2">
-                  {/* Deterministic QR code pattern */}
-                  {qrCodePattern.map((pixel, index) => (
-                    <div
-                      key={index}
-                      className={`w-full h-full ${
-                        pixel === 1 ? 'bg-white' : 'bg-gray-900'
-                      }`}
-                    />
-                  ))}
+            {/* Passenger Form */}
+            {activeTab === 'passenger' && (
+              <div className="md:col-span-2 space-y-6 pl-10 py-5">
+                {/* Passengers */}
+                <div className="grid md:grid-cols-4 gap-4">
+                  <LargaNowInput
+                    type="number"
+                    label="Adults"
+                    value={adults}
+                    onChange={(e) => setAdults(parseInt(e.target.value) || 0)}
+                    variant="bottom"
+                    size="default"
+                  />
+                  <LargaNowInput
+                    type="number"
+                    label="Children"
+                    value={children}
+                    onChange={(e) => setChildren(parseInt(e.target.value) || 0)}
+                    variant="bottom"
+                    size="default"
+                  />
+                  <LargaNowInput
+                    type="number"
+                    label="Infant"
+                    value={infants}
+                    onChange={(e) => setInfants(parseInt(e.target.value) || 0)}
+                    variant="bottom"
+                    size="default"
+                  />
+                  <LargaNowInput
+                    type="text"
+                    label="Promo Code"
+                    value={promoCode}
+                    onChange={(e) => setPromoCode(e.target.value)}
+                    variant="bottom"
+                    size="default"
+                  />
+                </div>
+
+                {/* Shipping Line */}
+                <ShippingLineDropdown
+                  value={shippingLine}
+                  onValueChange={setShippingLine}
+                  placeholder="Select shipping line"
+                  label="Shipping Line"
+                  size="default"
+                  className="bg-white border-b-1 border-gray-300"
+                />
+                <div className="flex">
+                  {/* Preferred Shipping Checkbox */}
+                  <LargaNowCheckbox
+                    checked={preferredShipping}
+                    onCheckedChange={setPreferredShipping}
+                    label="Do you have a preferred shipping line?"
+                    size="default"
+                    fontFamily="almarai"
+                    className="flex-1 pl-0"
+                  />
+
+                  {/* Book Now Button */}
+                  <LargaNowButton
+                    variant="primary"
+                    size="xl"
+                    className="min-w-[200px] rounded-[50px] px-8 py-4"
+                  >
+                    BOOK NOW
+                  </LargaNowButton>
                 </div>
               </div>
-              <p className="text-sm text-gray-600 text-center">
-                Faster Booking?<br />
-                Scan our Mobile App
-              </p>
+            )}
+
+            {/* Vehicle Form */}
+            {activeTab === 'vehicle' && (
+              <div className="md:col-span-2 space-y-6 pl-10 py-5">
+                {/* Vehicle Details */}
+                <div className="grid md:grid-cols-4 gap-4">
+                  <LargaNowInput
+                    type="text"
+                    label="Vehicle Brand"
+                    value={vehicleBrand}
+                    onChange={(e) => setVehicleBrand(e.target.value)}
+                    variant="bottom"
+                    size="default"
+                    placeholder="e.g., Toyota"
+                  />
+                  <LargaNowInput
+                    type="text"
+                    label="Vehicle Model"
+                    value={vehicleModel}
+                    onChange={(e) => setVehicleModel(e.target.value)}
+                    variant="bottom"
+                    size="default"
+                    placeholder="e.g., Vios"
+                  />
+                  <LargaNowInput
+                    type="number"
+                    label="Vehicle Year"
+                    value={vehicleYear}
+                    onChange={(e) => setVehicleYear(e.target.value)}
+                    variant="bottom"
+                    size="default"
+                    placeholder="e.g., 2020"
+                  />
+                  <LargaNowInput
+                    type="text"
+                    label="Vehicle Type"
+                    value={vehicleType}
+                    onChange={(e) => setVehicleType(e.target.value)}
+                    variant="bottom"
+                    size="default"
+                    placeholder="e.g., Car, Motorcycle"
+                  />
+                </div>
+
+                {/* Shipping Line */}
+                <ShippingLineDropdown
+                  value={shippingLine}
+                  onValueChange={setShippingLine}
+                  placeholder="Select shipping line"
+                  label="Shipping Line"
+                  size="default"
+                  className="bg-white border-b-1 border-gray-300"
+                />
+                <div className="flex">
+                  {/* Preferred Shipping Checkbox */}
+                  <LargaNowCheckbox
+                    checked={preferredShipping}
+                    onCheckedChange={setPreferredShipping}
+                    label="Do you have a preferred shipping line?"
+                    size="default"
+                    fontFamily="almarai"
+                    className="flex-1 pl-0"
+                  />
+
+                  {/* Book Now Button */}
+                  <LargaNowButton
+                    variant="primary"
+                    size="xl"
+                    className="min-w-[200px] rounded-[50px] px-8 py-4"
+                  >
+                    BOOK NOW
+                  </LargaNowButton>
+                </div>
+              </div>
+            )}
+
+            {/* QR Code Image Section */}
+            <div className="flex flex-col items-center justify-center">
+              <div className="bg-white border-1 border-gray-200 rounded-lg p-2">
+                <LargaNowImage
+                  src="/images/qr.png"
+                  alt="QR Code for Mobile App"
+                  size="xl"
+                  objectFit="contain"
+                  fallbackSrc="/images/qr-fallback.png"
+                />
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-bold text-gray-600 pt-2">Faster Booking? Scan our Mobile App</p>
+              </div>
             </div>
           </div>
         </div>

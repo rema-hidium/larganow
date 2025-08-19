@@ -71,7 +71,7 @@ export function DatePicker({
     <div className="w-full flex flex-col">
       {label && (
         <label className={cn(
-          "block text-sm font-medium text-gray-700 mb-1",
+          "block text-sm font-bold text-gray-700 mb-1",
           labelClassName
         )}>
           {label}
