@@ -39,7 +39,7 @@ export default function BookingForm() {
   const isRoundTrip = tripType === 'round-trip';
 
   return (
-    <section className="bg-gray-50 mt-[-100px] font-almarai">
+    <section className="bg-gray-50 mt-[-50px] font-almarai">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Booking Form Card */}
         <div className="bg-white shadow-lg -mt-20 relative z-20 rounded-b-2xl">
@@ -69,7 +69,7 @@ export default function BookingForm() {
 
           <div className="grid md:grid-cols-3 gap-6">
             {/* Common Trip Details Section */}
-            <div className="md:col-span-3 space-y-6 bg-gray-100 p-10 py-5">
+            <div className="md:col-span-3 space-y-6 bg-gray-100 px-10 py-5">
               {/* Trip Type, From, To, Departure Date - Horizontal Layout */}
               <div className="flex flex-col md:flex-row md:items-end md:space-x-4 space-y-4 md:space-y-0">
                 {/* Trip Type */}
@@ -287,13 +287,12 @@ export default function BookingForm() {
 
             {/* QR Code Image Section */}
             <div className="flex flex-col items-center justify-center">
-              <div className="bg-white border-1 border-gray-200 rounded-lg p-2">
-                <LargaNowImage
-                  src="/images/qr.png"
-                  alt="QR Code for Mobile App"
-                  size="xl"
-                  objectFit="contain"
-                  fallbackSrc="/images/qr-fallback.png"
+              <div className="w-48 h-48 bg-white border-2 border-gray-300 rounded-lg p-2">
+                <img 
+                  src="/images/qr.png" 
+                  alt="QR Code for Mobile App" 
+                  className="w-full h-full object-contain"
+                  loading="eager"
                 />
               </div>
               <div className="text-center">

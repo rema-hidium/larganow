@@ -42,7 +42,8 @@ export function LargaNowCheckbox({
     xl: 'w-6 h-6',
   };
 
-  const checkboxId = id || `checkbox-${Math.random().toString(36).substr(2, 9)}`;
+  const generatedId = React.useId();
+  const checkboxId = id || `checkbox-${generatedId}`;
 
   return (
     <div className={cn("w-full flex flex-col", className)}>
