@@ -1,12 +1,13 @@
-import React from 'react';
+'use client';
+import { useState } from 'react';
 import ButtonShowcase from '../components/ui/ButtonShowcase';
 import { LargaNowButton } from '../components/ui/LargaNowButton';
 import { LargaNowDropdown, LocationDropdown, ShippingLineDropdown, DateRangeDropdown } from '../components/ui/LargaNowDropdown';
 
 export default function ShowcasePage() {
-  const [selectedLocation, setSelectedLocation] = React.useState('');
-  const [selectedShipping, setSelectedShipping] = React.useState('');
-  const [selectedDate, setSelectedDate] = React.useState('');
+  const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedShipping, setSelectedShipping] = useState('');
+  const [selectedDate, setSelectedDate] = useState('');
 
   const customOptions = [
     { value: 'option1', label: 'Option 1' },
@@ -234,27 +235,27 @@ export default function ShowcasePage() {
             <h3 className="text-lg font-semibold mb-4 font-alata">Code Examples</h3>
             <div className="space-y-4 text-sm font-mono bg-gray-100 p-4 rounded">
               <div>
-                <p className="text-gray-600 mb-2">// Using NavLink component (no fontFamily needed)</p>
+                <p className="text-gray-600 mb-2">{'// Using NavLink component (no fontFamily needed)'}</p>
                 <p className="text-green-600">{'<NavLink href="#">PROMOTIONS</NavLink>'}</p>
               </div>
               <div>
-                <p className="text-gray-600 mb-2">// Using LargaNowButton (defaults to Almarai)</p>
+                <p className="text-gray-600 mb-2">{'// Using LargaNowButton (defaults to Almarai)'}</p>
                 <p className="text-green-600">{'<LargaNowButton variant="primary">Book Now</LargaNowButton>'}</p>
               </div>
               <div>
-                <p className="text-gray-600 mb-2">// Using LargaNowButton with Alata font</p>
+                <p className="text-gray-600 mb-2">{'// Using LargaNowButton with Alata font'}</p>
                 <p className="text-green-600">{'<LargaNowButton variant="primary" fontFamily="alata">Navigation</LargaNowButton>'}</p>
               </div>
               <div>
-                <p className="text-gray-600 mb-2">// Using specialized dropdowns with labels</p>
+                <p className="text-gray-600 mb-2">{'// Using specialized dropdowns with labels'}</p>
                 <p className="text-green-600">{'<LocationDropdown value={location} onValueChange={setLocation} label="From" />'}</p>
               </div>
               <div>
-                <p className="text-gray-600 mb-2">// Using generic dropdown with label</p>
+                <p className="text-gray-600 mb-2">{'// Using generic dropdown with label'}</p>
                 <p className="text-green-600">{'<LargaNowDropdown options={options} value={value} onValueChange={setValue} label="Custom Field" />'}</p>
               </div>
               <div>
-                <p className="text-gray-600 mb-2">// Using dropdown without label</p>
+                <p className="text-gray-600 mb-2">{'// Using dropdown without label'}</p>
                 <p className="text-green-600">{'<LocationDropdown value={location} onValueChange={setLocation} />'}</p>
               </div>
             </div>

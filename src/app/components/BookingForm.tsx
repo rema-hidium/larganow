@@ -6,9 +6,9 @@ import { DatePicker } from "./ui/DatePicker";
 import { TripTypeRadio } from "./ui/TripTypeRadio";
 import { LargaNowInput } from "./ui/LargaNowInput";
 import { LargaNowCheckbox } from "./ui/LargaNowCheckbox";
-import { LargaNowImage } from "./ui/LargaNowImage";
+import Image from 'next/image';
 
-import { CarFront, CarIcon, UserIcon } from 'lucide-react';
+import { CarFront, UserIcon } from 'lucide-react';
 
 export default function BookingForm() {
   const [activeTab, setActiveTab] = useState('passenger');
@@ -19,19 +19,44 @@ export default function BookingForm() {
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date | undefined }>();
   
   // Passenger form state
-  const [adults, setAdults] = useState(4);
-  const [children, setChildren] = useState(1);
-  const [infants, setInfants] = useState(0);
-  const [promoCode, setPromoCode] = useState('VXS-45Y-RE23Z');
+  const [passengers, setPassengers] = useState(4);
+  const [promoCode, setPromoCode] = useState('');
+
+  // Function to format promo code input
+  const formatPromoCode = (input: string) => {
+    // Remove all non-alphanumeric characters
+    const cleaned = input.replace(/[^A-Za-z0-9]/g, '');
+    
+    // Limit to 11 characters (3 + 3 + 5)
+    const limited = cleaned.slice(0, 11);
+    
+    // Format as XXX-XXX-XXXXX
+    if (limited.length <= 3) {
+      return limited;
+    } else if (limited.length <= 6) {
+      return `${limited.slice(0, 3)}-${limited.slice(3)}`;
+    } else {
+      return `${limited.slice(0, 3)}-${limited.slice(3, 6)}-${limited.slice(6)}`;
+    }
+  };
+
+  // Function to handle promo code input changes
+  const handlePromoCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value;
+    const formatted = formatPromoCode(input);
+    setPromoCode(formatted);
+  };
+
+  // Function to validate promo code format
+  const isValidPromoCode = (code: string) => {
+    const promoCodeRegex = /^[A-Z0-9]{3}-[A-Z0-9]{3}-[A-Z0-9]{5}$/;
+    return promoCodeRegex.test(code);
+  };
   const [shippingLine, setShippingLine] = useState('evaristo-son');
   const [preferredShipping, setPreferredShipping] = useState(true);
 
   // Vehicle form state
   const [vehicleType, setVehicleType] = useState('car');
-  const [vehicleLength, setVehicleLength] = useState('');
-  const [vehicleWidth, setVehicleWidth] = useState('');
-  const [vehicleHeight, setVehicleHeight] = useState('');
-  const [vehicleWeight, setVehicleWeight] = useState('');
   const [vehicleBrand, setVehicleBrand] = useState('');
   const [vehicleModel, setVehicleModel] = useState('');
   const [vehicleYear, setVehicleYear] = useState('');
@@ -69,7 +94,7 @@ export default function BookingForm() {
 
           <div className="grid md:grid-cols-3 gap-6">
             {/* Common Trip Details Section */}
-            <div className="md:col-span-3 space-y-6 bg-gray-100 px-10 py-5">
+            <div className="md:col-span-3 space-y-6 bg-gray-100 px-10 py-4">
               {/* Trip Type, From, To, Departure Date - Horizontal Layout */}
               <div className="flex flex-col md:flex-row md:items-end md:space-x-4 space-y-4 md:space-y-0">
                 {/* Trip Type */}
@@ -141,53 +166,52 @@ export default function BookingForm() {
 
             {/* Passenger Form */}
             {activeTab === 'passenger' && (
-              <div className="md:col-span-2 space-y-6 pl-10 py-5">
+              <div className="md:col-span-2 space-y-6 pl-10">
                 {/* Passengers */}
                 <div className="grid md:grid-cols-4 gap-4">
                   <LargaNowInput
                     type="number"
-                    label="Adults"
-                    value={adults}
-                    onChange={(e) => setAdults(parseInt(e.target.value) || 0)}
+                    label="Passengers"
+                    value={passengers}
+                    onChange={(e) => setPassengers(parseInt(e.target.value) || 0)}
                     variant="bottom"
                     size="default"
                   />
-                  <LargaNowInput
-                    type="number"
-                    label="Children"
-                    value={children}
-                    onChange={(e) => setChildren(parseInt(e.target.value) || 0)}
-                    variant="bottom"
-                    size="default"
-                  />
-                  <LargaNowInput
-                    type="number"
-                    label="Infant"
-                    value={infants}
-                    onChange={(e) => setInfants(parseInt(e.target.value) || 0)}
-                    variant="bottom"
-                    size="default"
-                  />
-                  <LargaNowInput
-                    type="text"
-                    label="Promo Code"
-                    value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value)}
-                    variant="bottom"
-                    size="default"
-                  />
+                  <div className="space-y-1">
+                    <LargaNowInput
+                      type="text"
+                      label="Promo Code"
+                      value={promoCode}
+                      onChange={handlePromoCodeChange}
+                      variant="bottom"
+                      size="default"
+                      placeholder="VXS-45Y-RE23Z"
+                      maxLength={13}
+                      className="uppercase"
+                    />
+                      {promoCode && (
+                       <div className="text-xs text-gray-500">
+                         Format: XXX-XXX-XXXXX (letters and numbers only)
+                         {isValidPromoCode(promoCode) && (
+                           <span className="text-green-600 ml-2">✓ Valid format</span>
+                         )}
+                       </div>
+                     )}
+                  </div>
                 </div>
 
-                {/* Shipping Line */}
-                <ShippingLineDropdown
-                  value={shippingLine}
-                  onValueChange={setShippingLine}
-                  placeholder="Select shipping line"
-                  label="Shipping Line"
-                  size="default"
-                  className="bg-white border-b-1 border-gray-300"
-                />
-                <div className="flex">
+                {/* Shipping Line - Only show when checkbox is checked */}
+                {preferredShipping && (
+                  <ShippingLineDropdown
+                    value={shippingLine}
+                    onValueChange={setShippingLine}
+                    placeholder="Select shipping line"
+                    label="Shipping Line"
+                    size="default"
+                    className="bg-white border-b-1 border-gray-300 !rounded-none"
+                  />
+                )}
+                <div className="flex p-0">
                   {/* Preferred Shipping Checkbox */}
                   <LargaNowCheckbox
                     checked={preferredShipping}
@@ -253,15 +277,17 @@ export default function BookingForm() {
                   />
                 </div>
 
-                {/* Shipping Line */}
-                <ShippingLineDropdown
-                  value={shippingLine}
-                  onValueChange={setShippingLine}
-                  placeholder="Select shipping line"
-                  label="Shipping Line"
-                  size="default"
-                  className="bg-white border-b-1 border-gray-300"
-                />
+                {/* Shipping Line - Only show when checkbox is checked */}
+                {preferredShipping && (
+                  <ShippingLineDropdown
+                    value={shippingLine}
+                    onValueChange={setShippingLine}
+                    placeholder="Select shipping line"
+                    label="Shipping Line"
+                    size="default"
+                    className="bg-white border-b-1 border-gray-300 !rounded-none"
+                  />
+                )}
                 <div className="flex">
                   {/* Preferred Shipping Checkbox */}
                   <LargaNowCheckbox
@@ -285,20 +311,22 @@ export default function BookingForm() {
               </div>
             )}
 
-            {/* QR Code Image Section */}
-            <div className="flex flex-col items-center justify-center">
-              <div className="w-48 h-48 bg-white border-2 border-gray-300 rounded-lg p-2">
-                <img 
-                  src="/images/qr.png" 
-                  alt="QR Code for Mobile App" 
-                  className="w-full h-full object-contain"
-                  loading="eager"
-                />
-              </div>
-              <div className="text-center">
-                <p className="text-sm font-bold text-gray-600 pt-2">Faster Booking? Scan our Mobile App</p>
-              </div>
-            </div>
+                         {/* QR Code Image Section */}
+             <div className="flex flex-col items-center justify-center">
+               <div className="w-48 h-48 bg-white border-2 border-gray-300 rounded-lg p-2">
+                 <Image 
+                   src="/images/qr.png" 
+                   alt="QR Code for Mobile App" 
+                   width={176}
+                   height={176}
+                   className="w-full h-full object-contain"
+                   priority
+                 />
+               </div>
+               <div className="text-center">
+                 <p className="text-sm font-bold text-gray-600 pt-2">Faster Booking? Scan our Mobile App</p>
+               </div>
+             </div>
           </div>
         </div>
       </div>

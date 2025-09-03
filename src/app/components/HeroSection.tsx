@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 export default function HeroSection() {
   const [currentPlaceIndex, setCurrentPlaceIndex] = useState(0);
@@ -61,17 +62,12 @@ export default function HeroSection() {
     <section className="relative h-[50vh] overflow-hidden" style={{ fontFamily: 'var(--font-alata)' }}>
              {/* Background Image */}
        <div className="absolute inset-0">
-         <img
+         <Image
            src={currentImages[currentImageIndex].src}
            alt={currentImages[currentImageIndex].alt}
-           className="w-full h-full object-cover"
-           loading="eager"
-           onError={(e) => {
-             console.log(`Failed to load image: ${currentImages[currentImageIndex].src}`);
-           }}
-           onLoad={() => {
-             console.log(`Successfully loaded image: ${currentImages[currentImageIndex].src}`);
-           }}
+           fill
+           className="object-cover"
+           priority
          />
          {/* Overlay for better text readability */}
          <div className="absolute inset-0"></div>

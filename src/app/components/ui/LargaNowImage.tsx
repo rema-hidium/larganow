@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import Image from "next/image"
 
 interface LargaNowImageProps {
   src: string
@@ -12,7 +13,6 @@ interface LargaNowImageProps {
   width?: number
   height?: number
   objectFit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down'
-  loading?: 'lazy' | 'eager'
   onLoad?: () => void
   onError?: () => void
   fallbackSrc?: string
@@ -27,7 +27,6 @@ export function LargaNowImage({
   width,
   height,
   objectFit = 'contain',
-  loading = 'lazy',
   onLoad,
   onError,
   fallbackSrc
@@ -108,16 +107,16 @@ export function LargaNowImage({
       )}
 
       {/* Image */}
-      <img
+      <Image
         src={imageSrc}
         alt={alt}
+        fill
         className={cn(
-          "w-full h-full transition-opacity duration-300",
+          "transition-opacity duration-300",
           objectFitClasses[objectFit],
           isLoading ? "opacity-0" : "opacity-100",
           className
         )}
-        loading={loading}
         onLoad={handleLoad}
         onError={handleError}
       />
